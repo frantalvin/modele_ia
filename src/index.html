@@ -1,11 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hello World</title>
-  </head>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction Prix Immobilier</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        input { padding: 8px; margin-right: 10px; }
+        button { padding: 8px 15px; }
+        #result { margin-top: 20px; font-size: 1.2em; font-weight: bold; }
+    </style>
+</head>
+<body>
 
-  <body>
-    <h1>Hel
+    <h1>Prédiction de Prix Immobilier</h1>
+    <p>Entrez la surface en m² pour obtenir une prédiction du prix.</p>
+
+    <form id="predict-form">
+        <input type="number" id="surface" name="surface" placeholder="Surface en m²" required>
+        <button type="submit">Prédire</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('predict-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+
+            const surface = document.getElementById('surface').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!surface) {
+                resultDiv.textContent = 'Veuillez entrer une surface.';
+                return;
+            }
+
+            try {
+                // Affiche un message de chargement
+                resultDiv.textContent = 'Prédiction en cours...';
+
+                // Appelle l'API de prédiction
+                const response = await fetch(`/predict?surface=${surface}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Formate le prix pour être plus lisible
+                    const formattedPrice = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(data.predicted_price);
+                    resultDiv.textContent = `Prix prédit : ${formattedPrice}`;
+                } else {
+                    resultDiv.textContent = `Erreur : ${data.error || 'Une erreur est survenue.'}`;
+                }
+            } catch (error) {
+                console.error('Erreur lors de l'appel à l'API:', error);
+                resultDiv.textContent = 'Impossible de contacter le serveur de prédiction.';
+            }
+        });
+    </script>
+
+</body>
 </html>

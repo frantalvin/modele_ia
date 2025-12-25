@@ -1,6 +1,3 @@
-{
-  "predicted_price": 372380.95
-}
 import os
 
 from flask import Flask, send_file, request, jsonify
